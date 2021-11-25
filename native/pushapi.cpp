@@ -6,7 +6,8 @@ static std::shared_ptr<xlab::Push> gPush = nullptr;
 
 namespace PushApi
 {
-    static inline void set_event(std::shared_ptr<xlab::IEvent> evt){
+    static inline void set_event(std::shared_ptr<xlab::IEvent> evt)
+    {
         xlab::Push::event = evt;
     }
 

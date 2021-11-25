@@ -41,19 +41,33 @@ namespace xlab
 
         bool doSend();
 
+        void onStats();
+
         void onNetBand();
+
+        void onNetStatus();
 
         void onSuccess();
 
         void onError();
-        
+
+        bool buildVideoStream();
+
+        bool buildAudioStream();
+
+        bool pushPacket(std::shared_ptr<Packet> packet);
+
+        const std::shared_ptr<Packet> popPacket();
+
+        void cleanPacket();
+
     public:
         static inline std::shared_ptr<IEvent> event = nullptr;
 
     private:
         std::thread thread_;
-        std::mutex mutex_;
-        std::atomic<bool> is_quit_;
+        std::mutex packet_mutex_;
+        std::atomic<bool> is_quit_{false};
 
         std::list<std::shared_ptr<Packet>> packet_list_;
         std::vector<unsigned char> video_head_;
@@ -62,7 +76,7 @@ namespace xlab
         Semaphore video_head_sem_;
         Semaphore audio_head_sem_;
         Semaphore nap_;
-        IntCB int_cb_;
+        IntCB int_cb_{};
 
         std::string url_;
         int64_t bitrate_;
@@ -70,11 +84,21 @@ namespace xlab
         int height_;
         int channels_;
 
-        bool run_success_flag_;
-        int64_t send_packet_size_;
+        AVFormatContext *fmt_ctx_ = nullptr;
+        AVCodecContext *video_codec_ctx_ = nullptr;
+        AVCodecContext *audio_codec_ctx_ = nullptr;
+        AVDictionary *options_ = nullptr;
+        int io_open_result_ = -1;
+        int io_write_head_result_ = -1;
 
-        std::optional<Time::Point> start_time_{};
-        
+        bool run_success_flag_ = false;
+        int64_t send_packet_size_ = 0;
+        std::optional<Time::Point> get_net_band_start_time_{};
+        std::optional<Time::Point> get_net_status_start_time_{};
+
+        std::atomic<bool> need_key_frame_{true};
+        int64_t post_packet_bytes_ = 0;
+        int64_t lost_packet_bytes_ = 0;
     };
 
 }
