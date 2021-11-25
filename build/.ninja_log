@@ -1,0 +1,7 @@
+# ninja log v5
+0	493	1637821561701282058	CMakeFiles/push.dir/native/semaphore.cpp.o	526104505007279
+1	651	1637821561861282428	CMakeFiles/test_push.dir/test/test_push.cpp.o	aedfe764ad7db625
+0	667	1637821561877949133	CMakeFiles/push.dir/native/pushapi.cpp.o	cb99d43df9ba0671
+1	2379	1637821627414767342	CMakeFiles/push.dir/native/push.cpp.o	5c70c367924456ce
+2380	2462	1637821627498100868	libpush.so	401c964b6fbee3fa
+2462	2621	1637821627654767897	test_push	f67ee5af02416b89

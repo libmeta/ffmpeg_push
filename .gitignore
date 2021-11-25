@@ -1,0 +1,6 @@
+!.gitignore
+build/
+libs/sources/output/
+*/.gitkeep
+*/.*
+.cache/

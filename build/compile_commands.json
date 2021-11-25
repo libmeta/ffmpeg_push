@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/x/workspace/project/push/build",
+  "command": "/bin/c++ -Dpush_EXPORTS -I/home/x/workspace/project/push -I/home/x/workspace/project/push/native   -std=c++17  -fPIC -g -fPIC -o CMakeFiles/push.dir/native/push.cpp.o -c /home/x/workspace/project/push/native/push.cpp",
+  "file": "/home/x/workspace/project/push/native/push.cpp"
+},
+{
+  "directory": "/home/x/workspace/project/push/build",
+  "command": "/bin/c++ -Dpush_EXPORTS -I/home/x/workspace/project/push -I/home/x/workspace/project/push/native   -std=c++17  -fPIC -g -fPIC -o CMakeFiles/push.dir/native/pushapi.cpp.o -c /home/x/workspace/project/push/native/pushapi.cpp",
+  "file": "/home/x/workspace/project/push/native/pushapi.cpp"
+},
+{
+  "directory": "/home/x/workspace/project/push/build",
+  "command": "/bin/c++ -Dpush_EXPORTS -I/home/x/workspace/project/push -I/home/x/workspace/project/push/native   -std=c++17  -fPIC -g -fPIC -o CMakeFiles/push.dir/native/semaphore.cpp.o -c /home/x/workspace/project/push/native/semaphore.cpp",
+  "file": "/home/x/workspace/project/push/native/semaphore.cpp"
+},
+{
+  "directory": "/home/x/workspace/project/push/build",
+  "command": "/bin/c++ -I/home/x/workspace/project/push -I/home/x/workspace/project/push/native   -std=c++17  -fPIC -g -o CMakeFiles/test_push.dir/test/test_push.cpp.o -c /home/x/workspace/project/push/test/test_push.cpp",
+  "file": "/home/x/workspace/project/push/test/test_push.cpp"
+}
+]
