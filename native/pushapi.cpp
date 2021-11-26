@@ -1,4 +1,3 @@
-#include "event.hpp"
 #include "push.hpp"
 
 static std::mutex gMutex;
