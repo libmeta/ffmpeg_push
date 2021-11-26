@@ -254,7 +254,7 @@ namespace xlab
         const auto get_netband_time_diff = Time::Point::Now() - get_net_band_start_time_.value();
         if (get_netband_time_diff >= 2000ms)
         {
-            int64_t netband = send_packet_size_ * 8 / get_netband_time_diff.ToChrono<s>().count();
+            const int64_t netband = send_packet_size_ * 8 / get_netband_time_diff.ToChrono<s>().count();
             get_net_band_start_time_ = Time::Point::Now();
             send_packet_size_ = 0;
             if (event != nullptr)
@@ -280,23 +280,21 @@ namespace xlab
         {
             int lost_percent = 0;
             int64_t remain_bytes = 0;
-            int64_t take_bytes = 0;
-
             std::lock_guard<decltype(packet_mutex_)> lock(packet_mutex_);
             for (const auto &it : packet_list_)
             {
                 remain_bytes += it->size;
             }
 
-            take_bytes = post_packet_bytes_ - remain_bytes;
-            if (take_bytes > 0)
+            if (post_packet_bytes_ > remain_bytes)
             {
+                const int take_bytes = post_packet_bytes_ - remain_bytes;
                 lost_percent = static_cast<int>((lost_packet_bytes_ * 1.0 / take_bytes) * 100);
             }
 
             post_packet_bytes_ = remain_bytes;
-            int net_status = lost_percent <= 9 ? 0 : -1;
             get_net_status_start_time_ = Time::Point::Now();
+            const int net_status = lost_percent <= 9 ? 0 : -1;
             if (event != nullptr)
             {
                 nlohmann::json json;
@@ -458,21 +456,21 @@ namespace xlab
 
         if (key_frame_count == 0)
         {
-            bool has_video_packet = false;
-            if (packet_list_.size() >= 1000)
+            bool need_clean_packet = packet_list_.size() >= 2000;
+            if (!need_clean_packet && packet_list_.size() >= 1000)
             {
-                has_video_packet = packet_list_.end() != std::find_if(packet_list_.begin(), packet_list_.end(), [&](const std::shared_ptr<Packet> &it)
-                                                                      { return it->stream_index == 0; });
+                need_clean_packet = packet_list_.end() == std::find_if(packet_list_.begin(), packet_list_.end(), [](const std::shared_ptr<Packet> &it)
+                                                                { return it->stream_index == 0; });
             }
 
-            if (!has_video_packet)
+            if (need_clean_packet)
             {
-                for (const auto &it : packet_list_)
-                {
-                    lost_packet_bytes_ += it->size;
-                }
-
-                packet_list_.clear();
+                packet_list_.remove_if([this](const std::shared_ptr<Packet> &it)
+                                       {
+                                           lost_packet_bytes_ += it->size;
+                                           need_key_frame_ = true;
+                                           return true;
+                                       });
             }
         }
         else if ((key_frame_count > 0) && (key_frame_count < 3))
@@ -489,22 +487,23 @@ namespace xlab
                                            return false;
                                        }
 
-                                       const auto ret = key_cnt == 1;
-                                       if (ret)
+                                       if (key_cnt == 1)
                                        {
                                            lost_packet_bytes_ += it->size;
+                                           return true;
                                        }
-                                       return ret;
+
+                                       return false;
                                    });
         }
         else
         {
-            for (const auto &it : packet_list_)
-            {
-                lost_packet_bytes_ += it->size;
-            }
-            packet_list_.clear();
-            need_key_frame_ = false;
+            packet_list_.remove_if([this](const std::shared_ptr<Packet> &it)
+                                   {
+                                       lost_packet_bytes_ += it->size;
+                                       need_key_frame_ = true;
+                                       return true;
+                                   });
         }
 
         return true;
@@ -529,10 +528,12 @@ namespace xlab
     void Push::cleanPacket()
     {
         std::lock_guard<decltype(packet_mutex_)> lock(packet_mutex_);
-        packet_list_.clear();
-        need_key_frame_ = true;
-        post_packet_bytes_ = 0;
-        lost_packet_bytes_ = 0;
+        packet_list_.remove_if([this](const std::shared_ptr<Packet> &it)
+                               {
+                                   lost_packet_bytes_ += it->size;
+                                   need_key_frame_ = true;
+                                   return true;
+                               });
     }
 
 }

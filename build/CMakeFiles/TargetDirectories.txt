@@ -1,4 +1,0 @@
-/home/x/workspace/project/push/build/CMakeFiles/push.dir
-/home/x/workspace/project/push/build/CMakeFiles/test_push.dir
-/home/x/workspace/project/push/build/CMakeFiles/edit_cache.dir
-/home/x/workspace/project/push/build/CMakeFiles/rebuild_cache.dir
